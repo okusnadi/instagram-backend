@@ -1,0 +1,30 @@
+{
+  "name": "instagram-backend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "nodemon --exec babel-node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GitHubGW/instagram-backend.git"
+  },
+  "keywords": [],
+  "author": "GW",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GitHubGW/instagram-backend/issues"
+  },
+  "homepage": "https://github.com/GitHubGW/instagram-backend#readme",
+  "dependencies": {
+    "apollo-server": "^3.5.0",
+    "graphql": "^15.7.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/node": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "nodemon": "^2.0.15",
+    "prisma": "^3.4.2"
+  }
+}
