@@ -1,39 +1,53 @@
+import { PrismaClient } from "@prisma/client";
 import { ApolloServer, gql } from "apollo-server";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 
+const client = new PrismaClient();
+
 const typeDefs = gql`
   type Movie {
-    title: String
-    year: Int
+    id: Int!
+    title: String!
+    year: Int!
+    genre: String
+    createdAt: String!
+    updatedAt: String!
   }
 
   type Query {
     movies: [Movie]
-    movie: Movie
+    movie(id: Int!): Movie
   }
 
   type Mutation {
-    createMovie(title: String!): Boolean
-    deleteMovie(title: String!): Boolean
+    createMovie(title: String!, year: Int!, genre: String): Movie
+    deleteMovie(id: Int!): Movie
+    updateMovie(id: Int!, title: String!): Movie
   }
 `;
 
 const resolvers = {
   Query: {
-    movies: () => [],
-    movie: () => ({ title: "Ring", year: 2021 }),
+    movies: () => client.movie.findMany(),
+    movie: async (_, { id }) => {
+      const foundMovie = await client.movie.findUnique({ where: { id } });
+      return foundMovie;
+    },
   },
 
   Mutation: {
-    createMovie: (_, { title }) => {
-      console.log("createMovie args", title);
-
-      return true;
+    createMovie: async (_, { title, year, genre }) => {
+      const createdMovie = await client.movie.create({ data: { title, year, genre } });
+      return createdMovie;
     },
-    deleteMovie: (_, { title }) => {
-      console.log("deleteMovie args", title);
-
-      return true;
+    deleteMovie: async (_, { id }) => {
+      const deletedMovie = await client.movie.delete({ where: { id } });
+      return deletedMovie;
+    },
+    updateMovie: async (_, { id, title }) => {
+      const updatedMovie = await client.movie.update({ where: { id }, data: { title } });
+      console.log("updatedMovie", updatedMovie);
+      return updatedMovie;
     },
   },
 };
