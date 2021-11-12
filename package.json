@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "nodemon --exec babel-node server.js"
+    "start": "nodemon --exec babel-node server.js",
+    "migrate": "npx prisma migrate dev"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/GitHubGW/instagram-backend#readme",
   "dependencies": {
+    "@prisma/client": "^3.4.2",
     "apollo-server": "^3.5.0",
     "graphql": "^15.7.2"
   },
