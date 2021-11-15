@@ -39,12 +39,11 @@ dotenv.config();
 import "dotenv/config";
 ```
 
-## User 파트
+### AND, OR, NOR
 
-- 계정 생성
-- 프로필 보기
-- 로그인
-- 프로필 수정
-- 유저 팔로워
-- 유저 언팔로워
-- 프로필 이미지 변경 (이미지 업로드)
+- https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#or
+
+### Prisma client methods
+
+- findUnique(): schema.prisma파일에서 @unique인 필드들만 데이터베이스에서 찾을 수 있다.
+- findFirst(): @unique가 아닌 모든 필드들을 이용해서 데이터베이스에서 일치하는 가장 첫 번쨰 데이터를 찾을 수 있다.
