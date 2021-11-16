@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import client from "../../client";
 
@@ -18,9 +19,7 @@ export default {
       }
 
       // 3. username과 password가 일치하면 토큰을 생성 및 싸인해서 유저에게 주고, 로그인시킴
-      const token = await jwt.sign({ id: existingUser.id, potato: "hello" }, process.env.SECRET_KEY);
-      console.log("token", token);
-
+      const token = await jwt.sign({ id: existingUser.id }, process.env.SECRET_KEY);
       return { ok: true, token };
     },
   },
