@@ -60,3 +60,11 @@ import "dotenv/config";
 ```javascript
 const token = await jwt.sign({ id: existingUser.id }, process.env.SECRET_KEY);
 ```
+
+### 함수가 또 다른 함수를 리턴하는 형태 (Currying)
+
+```js
+const handleX = (handleY) => (root, args, context, info) => {
+  return handleY(root, args, context, info);
+};
+```
