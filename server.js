@@ -1,18 +1,30 @@
 import "dotenv/config";
-import { ApolloServer } from "apollo-server";
-import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
-import schema from "./schema";
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
+import { graphqlUploadExpress } from "graphql-upload";
+import { typeDefs, resolvers } from "./schema";
 import { handleGetUser } from "./users/users.utils";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 
-const server = new ApolloServer({
-  schema,
-  context: async ({ req }) => {
-    const loggedInUser = await handleGetUser(req.headers.token);
-    return { loggedInUser };
-  },
-  plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
-});
+const PORT = process.env.PORT;
 
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+const startServer = async () => {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async ({ req }) => {
+      const loggedInUser = await handleGetUser(req.headers.token);
+      return { loggedInUser };
+    },
+    plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
+  });
+  await server.start();
+
+  const app = express();
+  app.use(graphqlUploadExpress());
+  server.applyMiddleware({ app });
+  await new Promise((anonymousFunction) => app.listen({ port: PORT }, anonymousFunction));
+  console.log(`🚀 Apollo Server: http://localhost:${PORT}${server.graphqlPath}`);
+};
+
+startServer();
