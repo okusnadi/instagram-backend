@@ -1,14 +1,18 @@
+import { createWriteStream } from "fs";
 import bcrypt from "bcrypt";
+import { GraphQLUpload } from "graphql-upload";
 import client from "../../client";
 import { protectedResolver } from "../users.utils";
-import { GraphQLUpload } from "graphql-upload";
 
 export default {
   Upload: GraphQLUpload,
   Mutation: {
     // 프로필 수정
     editProfile: protectedResolver(async (_, { firstName, lastName, username, email, password, bio, avatar }, { loggedInUser }) => {
-      console.log("avatar", avatar);
+      const { filename, createReadStream } = await avatar;
+      const readStream = createReadStream();
+      const writeStream = createWriteStream(`${process.cwd()}/uploads/${filename}`);
+      readStream.pipe(writeStream);
 
       let hashedPassword = null;
       if (password) {

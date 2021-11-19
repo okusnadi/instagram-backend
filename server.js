@@ -19,8 +19,8 @@ const startServer = async () => {
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
   });
   await server.start();
-
   const app = express();
+  app.use(express.static(`${process.cwd()}/uploads`));
   app.use(graphqlUploadExpress());
   server.applyMiddleware({ app });
   await new Promise((anonymousFunction) => app.listen({ port: PORT }, anonymousFunction));

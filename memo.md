@@ -98,3 +98,34 @@ server.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
 });
 ```
+
+### createReadStream()
+
+- node.js의 fs패키지에서 가져온 createReadStream()메서드는 전달받은 파일을 스트림 형태로 읽어온다.
+- 전달받은 파일을 스트림 형태로 읽어오게 되면, 해당 파일에 대한 정보가 담겨져 있는 하나의 큰 객체를 받아온다.
+- 하지만 editProfile.resolvers.js파일에서는 createReadStream메서드를 fs가 아닌 Prisma의 Upload타입을 가진 avatar변수로부터 가져온 createReadStream이기 때문에 괄호 안에 파일을 전달해주지 않고도 해당 파일에 대한 정보를 스트림으로 가져올 수 있었다.
+
+```js
+import { createReadStream } from "fs";
+
+const readStream = createReadStream(process.cwd() + "/users/editProfile/hello.txt");
+```
+
+### createWriteStream()
+
+- createWriteStream()메서드는 전달받은 경로에 읽어온 스트림을 파일로 저장한다.
+- ()괄호 안에는 파일의 경로와 저장할 파일의 이름을 지정해준다. 
+- readStream.pipe(writeStream)을 통해 readStream과 writeStream을 연결해준다.
+
+```js
+import { createWriteStream } from "fs";
+
+const writeStream = createWriteStream("hello.txt");
+
+readStream.pipe(writeStream);
+```
+
+### pipe()
+
+- pipe()메서드는 여러 개의 스트림을 pipe를 이용해 연결할 수 있다.
+- readStream과 writeStream을 pipe를 이용해서 연결해준다.
