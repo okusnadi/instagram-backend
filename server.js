@@ -1,10 +1,11 @@
 import "dotenv/config";
 import express from "express";
+import morgan from "morgan";
 import { ApolloServer } from "apollo-server-express";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { graphqlUploadExpress } from "graphql-upload";
 import { typeDefs, resolvers } from "./schema";
 import { handleGetUser } from "./users/users.utils";
-import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 
 const PORT = process.env.PORT;
 
@@ -20,11 +21,13 @@ const startServer = async () => {
   });
   await server.start();
   const app = express();
-  app.use(express.static(`${process.cwd()}/uploads`));
+  app.use(morgan("dev"));
+  app.use("/uploads", express.static(`${process.cwd()}/uploads`));
   app.use(graphqlUploadExpress());
   server.applyMiddleware({ app });
-  await new Promise((anonymousFunction) => app.listen({ port: PORT }, anonymousFunction));
-  console.log(`🚀 Apollo Server: http://localhost:${PORT}${server.graphqlPath}`);
+  app.listen(PORT, () => {
+    console.log(`🚀 Server: http://localhost:${PORT}${server.graphqlPath}`);
+  });
 };
 
 startServer();
