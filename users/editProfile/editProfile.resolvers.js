@@ -38,7 +38,7 @@ export default {
         },
       });
       if (updatedUser) {
-        return { ok: true };
+        return { ok: true, error: "프로필 업데이트에 성공하였습니다." };
       } else {
         return { ok: false, error: "프로필 업데이트에 실패하였습니다." };
       }

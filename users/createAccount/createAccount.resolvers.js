@@ -16,11 +16,12 @@ export default {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // 3. 파라미터로 받은 값들과 해시화한 비밀번호를 이용해서 유저 모델 생성
-        const newUser = await client.user.create({ data: { firstName, lastName, username, email, password: hashedPassword } });
-        return newUser;
+        await client.user.create({ data: { firstName, lastName, username, email, password: hashedPassword } });
+
+        return { ok: true, error: "계정 생성에 성공하였습니다." };
       } catch (error) {
         console.log("createAccount error", error);
-        return error;
+        return { ok: false, error: "계정 생성에 실패하였습니다." };
       }
     },
   },

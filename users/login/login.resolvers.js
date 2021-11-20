@@ -20,7 +20,7 @@ export default {
 
       // 3. username과 password가 일치하면 토큰을 생성 및 싸인해서 유저에게 주고, 로그인시킴
       const token = await jwt.sign({ id: existingUser.id }, process.env.SECRET_KEY);
-      return { ok: true, token };
+      return { ok: true, token, error: "로그인에 성공하였습니다." };
     },
   },
 };
