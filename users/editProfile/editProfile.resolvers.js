@@ -9,10 +9,16 @@ export default {
   Mutation: {
     // 프로필 수정
     editProfile: protectedResolver(async (_, { firstName, lastName, username, email, password, bio, avatar }, { loggedInUser }) => {
-      const { filename, createReadStream } = await avatar;
-      const readStream = createReadStream();
-      const writeStream = createWriteStream(`${process.cwd()}/uploads/${filename}`);
-      readStream.pipe(writeStream);
+      let avatarUrl = null;
+
+      if (avatar) {
+        const { filename, createReadStream } = await avatar;
+        const newFileName = `${Date.now()}${filename}`;
+        const readStream = createReadStream();
+        const writeStream = createWriteStream(`${process.cwd()}/uploads/${newFileName}`);
+        readStream.pipe(writeStream);
+        avatarUrl = `http://localhost:4000/uploads/${newFileName}`;
+      }
 
       let hashedPassword = null;
       if (password) {
@@ -21,7 +27,15 @@ export default {
 
       const updatedUser = await client.user.update({
         where: { id: loggedInUser.id },
-        data: { firstName, lastName, username, email, ...(hashedPassword && { password: hashedPassword }), bio },
+        data: {
+          firstName,
+          lastName,
+          username,
+          email,
+          bio,
+          ...(hashedPassword && { password: hashedPassword }),
+          ...(avatarUrl && { avatar: avatarUrl }),
+        },
       });
       if (updatedUser) {
         return { ok: true };
