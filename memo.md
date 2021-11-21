@@ -129,3 +129,34 @@ readStream.pipe(writeStream);
 
 - pipe()메서드는 여러 개의 스트림을 pipe를 이용해 연결할 수 있다.
 - readStream과 writeStream을 pipe를 이용해서 연결해준다.
+
+### include
+
+- prisma클라이언트는 기본적으로 relation으로 연결된 필드들을 불러오게 되면 데이터를 불러오는 것이 아닌 null을 불러오게 된다.
+- 왜냐하면 relation으로 연결되어 있는 필드들은 아주 큰 데이터들을 담고 있을 가능성이 높기 때문이다.
+- 그래서 해당 데이터를 직접 불러오기 위해서는 include를 통해 불러올 relation 필드들을 직접 지정해주어야 한다.
+
+```js
+const foundUser = await client.user.findUnique({ 
+  where: { username }, 
+  include: { followers: true, followings: true } 
+});
+```
+
+### 팔로워 가져오기 (Pagination사용 X)
+
+- 방법1) A라는 유저를 먼저 찾고, A유저가 가지고 있는 팔로워들을 찾아서 가져온다.
+- 방법2) 데이터베이스의 전체 유저에서 A라는 유저를 팔로잉하고 있는 전체 유저들을 찾아서 가져온다.
+- 방법1에서 followers()와 followins()메서드를 사용할 수 있는데 followers와 followins이 relation된 필드들이기 때문에 해당 필드들의 데이터들을 가져올 때는 아래처럼 찾아온 객체 뒤에 메서드를 연결해서 가져올 수 있다.
+- 또한 followers()와 followins()메서드는 findUnique()같은 단일 객체(하나의 객체)에만 사용할 수 있다.
+- await client.user.findMany().followers()처럼 여러 객체 뒤에는 사용은 불가능하다.
+
+```js
+// 방법1
+const aFollowers = await client.user.findUnique({ where: { username } }).followers();
+console.log("aFollowers", aFollowers);
+
+// 방법2
+const bFollowers = await client.user.findMany({ where: { followings: { some: { username } } } });
+console.log("bFollowers", bFollowers);
+```
