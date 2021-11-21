@@ -21,7 +21,7 @@ const startServer = async () => {
   });
   await server.start();
   const app = express();
-  app.use(morgan("dev"));
+  // app.use(morgan("dev"));
   app.use("/uploads", express.static(`${process.cwd()}/uploads`));
   app.use(graphqlUploadExpress());
   server.applyMiddleware({ app });
