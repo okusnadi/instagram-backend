@@ -14,11 +14,6 @@ export default {
       return followings;
     },
 
-    // 해당 유저를 팔로잉 중인지 체크
-    isFollowing: () => {
-      return true;
-    },
-
     // 본인 확인
     isMe: ({ id }, args, { loggedInUser }) => {
       if (!loggedInUser) {
@@ -28,6 +23,20 @@ export default {
         return true;
       } else {
         return false;
+      }
+    },
+
+    // 해당 유저를 팔로잉 중인지 체크
+    isFollowing: async ({ id }, args, { loggedInUser }) => {
+      if (!loggedInUser || id === loggedInUser.id) {
+        return false;
+      }
+
+      const existingFollowing = await client.user.count({ where: { id: loggedInUser.id, followings: { some: { id } } } });
+      if (existingFollowing.length === 0) {
+        return false;
+      } else {
+        return true;
       }
     },
   },

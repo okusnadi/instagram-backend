@@ -31,9 +31,9 @@
 - dotenv를 설치 후, 불러와서 사용할 때 아래와 같이 3가지 방법으로 dotenv의 config()메서드를 실행시킬 수 있다.
 
 ```js
-require('dotenv').config();
+require("dotenv").config();
 
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 dotenv.config();
 
 import "dotenv/config";
@@ -114,7 +114,7 @@ const readStream = createReadStream(process.cwd() + "/users/editProfile/hello.tx
 ### createWriteStream()
 
 - createWriteStream()메서드는 전달받은 경로에 읽어온 스트림을 파일로 저장한다.
-- ()괄호 안에는 파일의 경로와 저장할 파일의 이름을 지정해준다. 
+- ()괄호 안에는 파일의 경로와 저장할 파일의 이름을 지정해준다.
 - readStream.pipe(writeStream)을 통해 readStream과 writeStream을 연결해준다.
 
 ```js
@@ -137,9 +137,9 @@ readStream.pipe(writeStream);
 - 그래서 해당 데이터를 직접 불러오기 위해서는 include를 통해 불러올 relation 필드들을 직접 지정해주어야 한다.
 
 ```js
-const foundUser = await client.user.findUnique({ 
-  where: { username }, 
-  include: { followers: true, followings: true } 
+const foundUser = await client.user.findUnique({
+  where: { username },
+  include: { followers: true, followings: true },
 });
 ```
 
@@ -163,7 +163,7 @@ console.log("bFollowers", bFollowers);
 
 ### some, every, none
 
-- some: 필터 조건 중 하나라도 부합되는 것이 있는 데이터들을 가져온다. 
+- some: 필터 조건 중 하나라도 부합되는 것이 있는 데이터들을 가져온다.
 - every: 필터 조건에 완전히 부합하는 모든 데이터를 가져온다.
 - none: 필터 조건에 부합하는 모든 데이터들을 제외한 데이터들을 가져온다.
 - https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#some
@@ -199,4 +199,20 @@ export default {
     },
   },
 };
+```
+
+### isFollowing
+
+```js
+// 방법1
+const existingFollowing = await client.user
+  .findUnique({
+    where: { id: loggedInUser.id },
+  })
+  .followings({ where: { id } });
+
+// 방법2
+const existingFollowing = await client.user.count({
+  where: { id: loggedInUser.id, followings: { some: { id } } },
+});
 ```
