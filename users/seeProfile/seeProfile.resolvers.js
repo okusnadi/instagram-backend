@@ -2,7 +2,7 @@ import client from "../../client";
 
 export default {
   Query: {
-    // 프로필 확인
+    // 유저 프로필 확인
     seeProfile: async (_, { username }) => {
       try {
         // username을 가진 유저가 있는지 DB에서 체크 후, 있다면 해당 유저 정보를 찾아옴

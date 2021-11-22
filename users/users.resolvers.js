@@ -1,12 +1,34 @@
+import client from "../client";
+
 export default {
   User: {
-    totalFollowers: (parent) => {
-      console.log("parent", parent);
-
-      return 666;
+    // 전체 팔로워 수
+    totalFollowers: async ({ id }) => {
+      const followers = await client.user.count({ where: { followings: { some: { id } } } });
+      return followers;
     },
-    totalFollowings: () => {
-      return 999;
+
+    // 전체 팔로잉 수
+    totalFollowings: async ({ id }) => {
+      const followings = await client.user.count({ where: { followers: { some: { id } } } });
+      return followings;
+    },
+
+    // 해당 유저를 팔로잉 중인지 체크
+    isFollowing: () => {
+      return true;
+    },
+
+    // 본인 확인
+    isMe: ({ id }, args, { loggedInUser }) => {
+      if (!loggedInUser) {
+        return false;
+      }
+      if (id === loggedInUser.id) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

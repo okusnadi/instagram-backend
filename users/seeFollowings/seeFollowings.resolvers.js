@@ -2,6 +2,7 @@ import client from "../../client";
 
 export default {
   Query: {
+    // 유저 팔로잉 보기
     seeFollowings: async (_, { username, lastUserId }) => {
       try {
         const existingUser = client.user.findUnique({ where: { username }, select: { username } });
