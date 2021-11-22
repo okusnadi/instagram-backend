@@ -3,8 +3,6 @@ import client from "../../client";
 export default {
   Query: {
     seeFollowings: async (_, { username, lastUserId }) => {
-      console.log("username,cursor", username, lastUserId);
-
       try {
         const existingUser = client.user.findUnique({ where: { username }, select: { username } });
         if (!existingUser) {
@@ -16,9 +14,7 @@ export default {
           take: 5,
           ...(lastUserId && { cursor: { id: lastUserId } }),
         });
-
-        console.log("followings", followings);
-        return { ok: true, error: "팔로잉 보기에 성공하였습니다." };
+        return { ok: true, error: "팔로잉 보기에 성공하였습니다.", followings };
       } catch (error) {
         console.log("seeFollowings error", error);
         return { ok: true, error: "팔로잉 보기에 실패하였습니다." };

@@ -178,3 +178,25 @@ const result = await prisma.user.findMany({
   }
 }
 ```
+
+### User Resolver
+
+- seeProfile.typeDefs.js에서 type Query를 선언하고 seeProfile.resolvers.js애서 Query:{}안에 resolver함수를 생성한 것처럼 users.typeDefs.js에 있는 type User또한 resolvers를 생성할 수 있다.
+- totalFollowers와 totalFollowings는 schema.prisma파일에 추가하지 않은 필드이기 때문에 실제 DB에는 올라가지 않는다.
+- totalFollowers와 totalFollowings는 정해진 값이 아닌, 실시간으로 바뀌는 값이기 때문에 실제 DB에 올리지 않고, resolver함수를 통해 request가 일어날 때마다 실시간으로 계산해서 값을 반환해주도록 한다.
+- 기본적으로 User를 반환할 때 DB에서 해당 필드에 대한 값을 찾는데, totalFollowers와 totalFollowings는 DB에 없다.
+- 그렇게 되면 GraphQL은 DB가 아닌 resolver함수를 찾고 resolver함수에 있는 값을 반환하게 된다.
+- 또한 resolver함수의 첫 번째 인자인 parent에는 DB에서 찾은 정보를 객체로 담는다. (여기서는 찾은 User모델이 담긴다.)
+
+```js
+export default {
+  User: {
+    totalFollowers: (parent) => {
+      return 123;
+    },
+    totalFollowings: () => {
+      return 456;
+    },
+  },
+};
+```
