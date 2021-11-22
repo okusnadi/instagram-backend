@@ -147,7 +147,7 @@ const foundUser = await client.user.findUnique({
 
 - 방법1) A라는 유저를 먼저 찾고, A유저가 가지고 있는 팔로워들을 찾아서 가져온다.
 - 방법2) 데이터베이스의 전체 유저에서 A라는 유저를 팔로잉하고 있는 전체 유저들을 찾아서 가져온다.
-- 방법1에서 followers()와 followins()메서드를 사용할 수 있는데 followers와 followins이 relation된 필드들이기 때문에 해당 필드들의 데이터들을 가져올 때는 아래처럼 찾아온 객체 뒤에 메서드를 연결해서 가져올 수 있다.
+- 방법1에서 followers()와 followins()메서드를 사용할 수 있는데 followers와 followings이 relation된 필드들이기 때문에 해당 필드들의 데이터들을 가져올 때는 아래처럼 찾아온 객체 뒤에 메서드를 연결해서 가져올 수 있다.
 - 또한 followers()와 followins()메서드는 findUnique()같은 단일 객체(하나의 객체)에만 사용할 수 있다.
 - await client.user.findMany().followers()처럼 여러 객체 뒤에는 사용은 불가능하다.
 
@@ -159,4 +159,22 @@ console.log("aFollowers", aFollowers);
 // 방법2
 const bFollowers = await client.user.findMany({ where: { followings: { some: { username } } } });
 console.log("bFollowers", bFollowers);
+```
+
+### some, every, none
+
+- some: 필터 조건 중 하나라도 부합되는 것이 있는 데이터들을 가져온다. 
+- every: 필터 조건에 완전히 부합하는 모든 데이터를 가져온다.
+- none: 필터 조건에 부합하는 모든 데이터들을 제외한 데이터들을 가져온다.
+- https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#some
+
+```js
+const result = await prisma.user.findMany({
+  where: {
+    post: {
+      every: { published: true},
+      some: { content: { contains: "Prisma" } }
+    }
+  }
+}
 ```
