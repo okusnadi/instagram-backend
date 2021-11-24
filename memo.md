@@ -216,3 +216,37 @@ const existingFollowing = await client.user.count({
   where: { id: loggedInUser.id, followings: { some: { id } } },
 });
 ```
+
+### @relation
+
+- Photo모델은 user필드에 User를, User모델은 photos필드에 Photo[]을 가지게 되는데 이렇게 되면 두 모델 간에 relation(관계)이 생기게 된다.
+- 관계가 생기긴 이 두 필드는 실제 DB에는 저장되지 않고, 프리즈마와 프리즈마 클라이언트가 기억하고 사용하게 된다.
+- Photo모델은 user를 DB에 저장하지 않고, userId만 저장하게 된다.
+- userId필드에는 이 Photo모델과 관계가 있는 User모델의 id를 가지게 된다.
+- @relation(fields: [userId], references: [id])를 통해 user가 userId필드이고 userId필드는 id를 참조한다고 지정해줬다.
+
+```js
+model User {
+  id         Int      @id @default(autoincrement())
+  firstName  String
+  lastName   String?
+  username   String   @unique
+  email      String   @unique
+  password   String
+  bio        String?
+  avatar     String?
+  photos     Photo[]
+  followers  User[]   @relation(name: "FollowersFollowing", references: [id])
+  followings User[]   @relation(name: "FollowersFollowing", references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Photo {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```

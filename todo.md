@@ -17,6 +17,6 @@
 - [x] Edit Photo
 - [x] Like / Unlike Photo
 - [x] See Photo Like
-- [x] See Feed
+- [x] See Feed (현재 팔로우중인 유저들의 사진을 모아보기)
 - [x] Seach Photos
 - [x] See Hashtags
