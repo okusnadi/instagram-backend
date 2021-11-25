@@ -250,3 +250,37 @@ model Photo {
   updatedAt DateTime @updatedAt
 }
 ```
+
+### 정규 표현식
+
+- 정규 표현식을 통해 #가 붙은 문자열들만 추출해서 가져올 수 있다.
+- 아래와 같이 문자열에 match()메서드를 사용해서 ()괄호 안에 정규표현식을 써서 문자열들을 추출할 수 있다.
+- `/#[\w]+/g`: #이 포함된 전체 문자열들을 가져온다. (영어)
+- `/#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w]+/g`: #이 포함된 전체 문자열들을 가져온다. (한글+영어)
+- https://www.regexpal.com
+
+```js
+// ['#food', '#pizza', '#chicken']
+"OMG I love this #food and #pizza and #chicken.".match(/#[\w]+/g);
+```
+
+### connectOrCreate
+
+- connectOrCreate을 통해 where에는 찾을 데이터를 넣어주고, 만약 찾을 데이터가 존재하면 생성하지 않고, 존재하지 않으면 새로 생성한다.
+- 첫 번째 where는 hashtags를 찾아주는 역할을 하고, 만약 hashtags가 없다면 두 번째 create은 새로운 hashtags를 생성해주는 역할을 한다.
+- connectOrCreate은 id나 unique한 필드에만 사용할 수 있다.
+
+```js
+client.photo.create({
+  data: {
+    file,
+    caption,
+    hashtags: {
+      connectOrCreate: {
+        where: { hashtag: "#pizza" },
+        create: { hashtag: "#pizza" },
+      },
+    },
+  },
+});
+```
