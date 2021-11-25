@@ -4,33 +4,34 @@ import { protectedResolver } from "../../users/users.utils";
 export default {
   Mutation: {
     uploadPhoto: protectedResolver(async (_, { file, caption }, { loggedInUser }) => {
-      console.log("file, caption", file, caption);
-      console.log("loggedInUser", loggedInUser);
+      try {
+        let hashtagArray = [];
 
-      if (caption) {
-        // 1. 캡션이 존재한다면 파싱
-        const hashtags = caption.match(/#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w]+/g);
-        console.log("hashtags", hashtags);
+        if (caption) {
+          // 1. 캡션이 존재하면 캡션에서 정규표현식을 통해 해시태그를 추출
+          const hashtags = caption.match(/#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w]+/g);
 
-        client.photo.create({
+          // 2. 추출한 해시태그를 통해 새로운 해시태그를 생성 (connectOrCreate에서 사용할 배열 생성)
+          hashtagArray = hashtags.map((hashtag) => ({ where: { hashtag }, create: { hashtag } }));
+          console.log("hashtagArray", hashtagArray);
+        }
+
+        // 3. 사진을 위에서 생성한 새로운 해시태그 배열과 함께 DB에 생성 (사진을 업로드하면 해시태그 모델도 자동 생성됨)
+        const newPhoto = await client.photo.create({
           data: {
             file,
             caption,
-            hashtags: {
-              connectOrCreate: {
-                where: { hashtag: "#pizza" },
-                create: { hashtag: "#pizza" },
-              },
-            },
+            user: { connect: { id: loggedInUser.id } },
+            ...(hashtagArray.length > 0 && { hashtags: { connectOrCreate: hashtagArray } }),
           },
         });
+        console.log("newPhoto", newPhoto);
 
-        // 2. 파싱한 캡션에서 새로운 해시태그를 생성하거나 해시태그가 이미 존재한다면 추가
-        // 3. 사진을 새로운 해시태그와 함께 DB에 저장
-        // 4. 올린 사진을 해당 해시태그에도 추가
+        return { ok: true, error: "사진 업로드에 성공하였습니다.", photo: newPhoto };
+      } catch (error) {
+        console.log("uploadPhoto error", error);
+        return { ok: false, error: "사진 업로드에 실패하였습니다.", photo: null };
       }
-
-      return { ok: true, error: "사진을 업로드하는데 성공하였습니다.", photo: null };
     }),
   },
 };
