@@ -13,9 +13,7 @@ export default {
   },
 
   Hashtag: {
-    photos: async ({ id }, args) => {
-      console.log("args", args);
-
+    photos: async ({ id }, { page }) => {
       const photos = await client.photo.findMany({ where: { hashtags: { some: { id } } } });
       console.log("hh", photos);
 
