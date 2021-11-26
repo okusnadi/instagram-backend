@@ -39,5 +39,10 @@ export default {
         return true;
       }
     },
+
+    photos: async ({ id }) => {
+      const foundPhoto = await client.user.findUnique({ where: { id } }).photos();
+      return foundPhoto;
+    },
   },
 };
