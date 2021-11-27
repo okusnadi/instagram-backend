@@ -15,8 +15,6 @@ export default {
   Hashtag: {
     photos: async ({ id }, { page }) => {
       const photos = await client.photo.findMany({ where: { hashtags: { some: { id } } } });
-      console.log("hh", photos);
-
       return photos;
     },
     totalPhotos: async ({ id }) => {
