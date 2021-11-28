@@ -3,9 +3,10 @@ import { protectedResolver } from "../../users/users.utils";
 
 export default {
   Query: {
-    // 자신이 팔로잉하는 유저들이 올린 사진과 자신이 올린 사진을 최신순으로 보기
+    // 자신이 팔로잉하는 유저들이 올린 모든 사진과 자신이 올린 모든 사진을 최신순으로 보기
     seeFeed: protectedResolver(async (_, __, { loggedInUser }) => {
       try {
+        // 자신이 팔로잉하는 유저들이 올린 모든 사진과 자신이 올린 모든을 사진 최신순으로 가져옴
         const foundFollowingsPhoto = await client.photo.findMany({
           where: { OR: [{ user: { followers: { some: { id: loggedInUser.id } } } }, { userId: loggedInUser.id }] },
           orderBy: { createdAt: "desc" },

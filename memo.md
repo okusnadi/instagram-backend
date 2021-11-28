@@ -2,28 +2,22 @@
 
 ### DATABASE CLI
 
-- CREATE DATABASE 데이터베이스명;: 데이터베이스 생성
-- DROP DATABASE 데이터베이스명;: 데이터베이스 삭제
+- `CREATE DATABASE 데이터베이스명;`: 데이터베이스 생성
+- `DROP DATABASE 데이터베이스명;`: 데이터베이스 삭제
 
 ### prisma CLI
 
-#### npx prisma init
+- npx prisma init
+  - prisma폴더 아래 schema.prisma파일을 만들고, 초기화해준다.
+- npx prisma migration dev
+  - schema.prisma파일 안에 있는 datasource와 model Movie를 읽고, migrations폴더 아래 migration.sql을 생성해준다.
+  - migration.sql은 schema.prisma파일 안에 있는 Movie model을 SQL문으로 변환한 파일이다.
+  - 또한 node_modules/@prisma/client경로에 Prisma Client를 생성한다.
+  - 마지막으로 실제 데이터베이스 Movie model에 대한 테이블을 생성해준다.
 
-- prisma폴더 아래 schema.prisma파일을 만들고, 초기화해준다.
-
-#### npx prisma migration dev
-
-- schema.prisma파일 안에 있는 datasource와 model Movie를 읽고, migrations폴더 아래 migration.sql을 생성해준다.
-- migration.sql은 schema.prisma파일 안에 있는 Movie model을 SQL문으로 변환한 파일이다.
-- 또한 node_modules/@prisma/client경로에 Prisma Client를 생성한다.
-- 마지막으로 실제 데이터베이스 Movie model에 대한 테이블을 생성해준다.
-
-### typeDefs
+### typeDefs, resolvers
 
 - typeDefs는 그래프큐엘 쿼리들을 정의하는 파일이다.
-
-### resolvers
-
 - resolvers는 typeDefs파일에서 정의한 그래프큐엘 쿼리들에 대한 결과를 리턴하는 함수를 가지고 있는 파일이다.
 
 ### dotenv
@@ -31,17 +25,31 @@
 - dotenv를 설치 후, 불러와서 사용할 때 아래와 같이 3가지 방법으로 dotenv의 config()메서드를 실행시킬 수 있다.
 
 ```js
+// 방법1
 require("dotenv").config();
 
+// 방법2
 import dotenv from "dotenv";
 dotenv.config();
 
+// 방법3
 import "dotenv/config";
 ```
 
 ### AND, OR, NOR
 
+- AND는 지정한 조건 모두에 해당하는 데이터만 찾아온다.
+- OR는 지정한 조건을 통과하는 모든 데이터들을 찾아온다.
+- NOR는 지정한 조건에 해당하지 않는 모든 데이터들을 찾아온다.
 - https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#or
+
+```js
+// 자신이 팔로잉하는 유저들이 올린 모든 사진과 자신이 올린 모든을 사진 최신순으로 가져옴
+const foundFollowingsPhoto = await client.photo.findMany({
+  where: { OR: [{ user: { followers: { some: { id: loggedInUser.id } } } }, { userId: loggedInUser.id }] },
+  orderBy: { createdAt: "desc" },
+});
+```
 
 ### Prisma client methods
 
@@ -57,7 +65,7 @@ import "dotenv/config";
 - 클라이언트는 서버로부터 받은 토큰을 이용해서 서버에 request를 할 때마다 토큰을 함께 전달해줘서 서버로 하여금 어떤 클라이언트인지 확인할 수 있도록 해줘야 한다.
 - 토큰의 목적은 다른 사람이 변경하지 못하게 하고, 클라이언트를 확인하기 위함이다.
 
-```javascript
+```js
 const token = await jwt.sign({ id: existingUser.id }, process.env.SECRET_KEY);
 ```
 
