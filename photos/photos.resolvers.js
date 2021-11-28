@@ -10,6 +10,10 @@ export default {
       const foundHashtags = await client.hashtag.findMany({ where: { photos: { some: { id } } } });
       return foundHashtags;
     },
+    totalLikes: async ({ id }) => {
+      const totalLikes = await client.like.count({ where: { photoId: id } });
+      return totalLikes;
+    },
   },
 
   Hashtag: {
