@@ -143,6 +143,18 @@ const foundUser = await client.user.findUnique({
 });
 ```
 
+### select
+
+- select는 where을 통해 찾은 데이터 모델에서 모든 필드를 다 가져오는 것이 아닌 가져올 특정 필드만 선택할 때 사용한다.
+- 아래는 like모델에서 photoId가 photoId인 like모델을 찾고, 그 찾은 like모델에서 user필드만 선택해온 것이다.
+
+```js
+const foundLikeUsers = await client.like.findMany({
+  where: { photoId },
+  select: { user: true },
+});
+```
+
 ### 팔로워 가져오기 (Pagination사용 X)
 
 - 방법1) A라는 유저를 먼저 찾고, A유저가 가지고 있는 팔로워들을 찾아서 가져온다.
