@@ -4,7 +4,7 @@ export default gql`
   type CreateCommentResult {
     ok: Boolean!
     error: String
-    comment: Comment
+    comment: Comment!
   }
 
   type Mutation {
