@@ -14,6 +14,10 @@ export default {
       const totalLikes = await client.like.count({ where: { photoId: id } });
       return totalLikes;
     },
+    totalComments: async ({ id }) => {
+      const totalComments = await client.comment.count({ where: { photoId: id } });
+      return totalComments;
+    },
   },
 
   Hashtag: {
