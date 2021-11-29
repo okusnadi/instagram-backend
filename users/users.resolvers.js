@@ -15,11 +15,11 @@ export default {
     },
 
     // 본인 확인
-    isMe: ({ id }, args, { loggedInUser }) => {
+    isMe: ({ id }, _, { loggedInUser }) => {
       if (!loggedInUser) {
         return false;
       }
-      if (id === loggedInUser.id) {
+      if (id === loggedInUser?.id) {
         return true;
       } else {
         return false;
@@ -27,8 +27,8 @@ export default {
     },
 
     // 해당 유저를 팔로잉 중인지 체크
-    isFollowing: async ({ id }, args, { loggedInUser }) => {
-      if (!loggedInUser || id === loggedInUser.id) {
+    isFollowing: async ({ id }, _, { loggedInUser }) => {
+      if (!loggedInUser || id === loggedInUser?.id) {
         return false;
       }
 

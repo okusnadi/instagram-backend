@@ -18,6 +18,14 @@ export default {
       const totalComments = await client.comment.count({ where: { photoId: id } });
       return totalComments;
     },
+    isMine: async ({ userId }, _, { loggedInUser }) => {
+      console.log("userId", userId, loggedInUser.id);
+      if (userId === loggedInUser?.id) {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
 
   Hashtag: {
