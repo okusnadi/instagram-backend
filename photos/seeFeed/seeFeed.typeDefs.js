@@ -8,6 +8,6 @@ export default gql`
   }
 
   type Query {
-    seeFeed: SeeFeedResult!
+    seeFeed: SeeFeedResult
   }
 `;
