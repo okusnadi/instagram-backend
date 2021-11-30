@@ -305,3 +305,27 @@ client.photo.create({
   },
 });
 ```
+
+### onDelete, onUpdate
+
+- onDelete는 프리즈마 2.26.0에서 나온 Referential actions으로 `onDelete: Cascade`를 사용하면 해당 필드와 연결되어 있는 일종의 부모 모델이 삭제되었을 때 해당 모델도 같이 삭제할 수 있다.
+- 즉, relation으로 연결 되어 있는 부모 모델이 삭제될 때 현재 모델도 같이 삭제한다는 의미이다.
+- 그래서 예를들어 아래와 같은 상황이라면 Like 모델과 `@relation`되어 있는 일종의 부모 모델인 Photo와 User모델이 삭제가 되면 Like모델도 자동으로 같이 삭제되게 된다.
+- Photo가 삭제되거나, User가 삭제되면 Photo모델과 연결되어 있는 모든 Like모델도 같이 삭제된다.
+- onDelete외에도 onUpdate도 있는데, onUpdate는 부모 모델에 데이터 업데이트(수정)가 발생할 시, 연결된 모델도 같이 업데이트할 수 있다.
+- onUpdate는 명시하지 않을 경우 default로 Cascade옵션이 부여되고, onDelete는 default로 Cascade옵션이 부여되지 않기 때문에, 필요에 따라 지정해주면 된다.
+- https://www.prisma.io/docs/concepts/components/prisma-schema/relations/referential-actions
+
+```js
+model Like {
+  id        Int      @id @default(autoincrement())
+  photo     Photo    @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photoId   Int
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([photoId, userId])
+}
+```
