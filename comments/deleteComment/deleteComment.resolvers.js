@@ -6,22 +6,17 @@ export default {
     deleteComment: protectedResolver(async (_, { commentId }, { loggedInUser }) => {
       try {
         const foundComment = await client.comment.findUnique({ where: { id: commentId } });
-        console.log("foundComment", foundComment);
-
         if (!foundComment) {
-          return { ok: false, error: "존재하지 않는 댓글입니다.", comment: null };
+          return { ok: false, error: "존재하지 않는 댓글입니다." };
         }
         if (foundComment.userId !== loggedInUser.id) {
-          return { ok: true, error: "댓글을 작성한 사용자가 아닙니다.", photo: null };
+          return { ok: true, error: "댓글을 작성한 사용자가 아닙니다." };
         }
-
         const deletedComment = await client.comment.delete({ where: { id: commentId } });
-        console.log("deletedComment", deletedComment);
-
-        return { ok: true, error: "댓글 삭제에 성공하였습니다.", comment: deletedComment };
+        return { ok: true, error: "댓글 삭제에 성공하였습니다." };
       } catch (error) {
         console.log("deleteComment error", error);
-        return { ok: false, error: "댓글 삭제에 실패하였습니다.", comment: null };
+        return { ok: false, error: "댓글 삭제에 실패하였습니다." };
       }
     }),
   },

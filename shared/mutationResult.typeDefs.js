@@ -1,7 +1,8 @@
 import { gql } from "apollo-server-core";
 
 export default gql`
-  type Mutation {
-    deleteComment(commentId: Int!): MutationResult!
+  type MutationResult {
+    ok: Boolean!
+    error: String
   }
 `;

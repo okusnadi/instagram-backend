@@ -329,3 +329,29 @@ model Like {
   @@unique([photoId, userId])
 }
 ```
+
+### Mutation Result공유하기
+
+- 자주 쓰는 MutationResult들은 아래와 같이 따로 분류해서 만들어준 후 가져와서 사용할 수 있다.
+- deleteComment.typeDefs.js에서 MutationResult를 import해오지 않아도 되는 이유는 모든 typeDefs.js와 resolvers.js를 schema.js에서 로드해와서 합쳐주기 때문이다.
+
+```js
+// mutationResult.typeDefs.js
+import { gql } from "apollo-server-core";
+
+export default gql`
+  type MutationResult {
+    ok: Boolean!
+    error: String
+  }
+`;
+
+// deleteComment.typeDefs.js
+import { gql } from "apollo-server-core";
+
+export default gql`
+  type Mutation {
+    deleteComment(commentId: Int!): MutationResult!
+  }
+`;
+```
