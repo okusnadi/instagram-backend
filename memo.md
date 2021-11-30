@@ -355,3 +355,22 @@ export default gql`
   }
 `;
 ```
+
+### AWS S3
+
+- AWS S3(Simple Storage Service)란, Simple Storage Service의 약자로 파일 서버의 역할을 하는 서비스다.
+- 즉, 다시 말해 아마존에서 제공하는 파일을 올릴 수 있는 서버를 제공하는 서비스를 말한다.
+- AWS S3에 버킷을 생성하고, 버킷을 생성할 때 받은 Access Key ID와 Secret Access Key를 이용해서 AWS S3에 연결할 수 있다.
+
+```js
+import AWS from "aws-sdk";
+
+// aws-sdk를 import한 후, AWS S3에 연결하기 위해 기본 설정들을 지정한다.
+// 버킷을 생성할 때 받은 Access Key ID와 Secret Access Key를 이용해서 AWS S3에 연결한다.
+AWS.config.update({
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+```
