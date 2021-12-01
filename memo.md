@@ -429,3 +429,62 @@ export default {
   },
 };
 ```
+
+### AWS S3에 파일 업로드하기
+
+```js
+import AWS from "aws-sdk";
+
+// AWS에 연결을 위한 함수
+AWS.config.update({
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+/*
+// AWS에 연결해도 되지만 const s3=new AWS.S3()를 통해 s3객체를 생성하고 s3.config.update()로 s3에만 직접 연결해서 설정을 줄 수도 있다.
+const s3 = new AWS.S3();
+
+s3.config.update({
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+*/
+
+// AWS에 사진 업로드하는 함수
+export const handleUploadPhotoToAWS = async (avatar) => {
+  const { filename, createReadStream } = await avatar;
+  const bucketName = "instagram-gw-uploads";
+  const fileName = `${Date.now()}-${filename}`;
+  const readStream = createReadStream();
+
+  // params에는 AWS S3에 업로드하기 위해 필요한 설정들을 담고 있는 객체이다.
+  // Bucket에는 올릴 버킷의 이름을 지정해준다.
+  // Key에는 올릴 파일의 이름을 지정해준다.
+  // Body에는 올릴 파일의 stream이나 buffer, blob등을 지정해준다.
+  // ACL에는 올릴 수 있는 권한에 대한 허용 범위를 지정해준다. (필수 아님)
+  // public-read는 누구나 올릴 수 있도록 한다.
+  const params = {
+    Bucket: bucketName,
+    Key: fileName,
+    Body: readStream,
+    ACL: "public-read",
+  };
+
+  // new AWS.S3()를 통해 AWS S3서비스 객체를 생성한다.
+  // 위에서 만약 `const s3 = new AWS.S3()`를 통해 s3를 이미 생성했다면 여기서 생성해 줄 필요는 없다.
+  const s3 = new AWS.S3();
+
+  // 생성한 후 upload()메서드를 이용해서 파일을 업로드할 수 있다.
+  // upload()메서드는 첫 번째 인자로 params를 받고, 그 이후 인자로는 콜백함수를 받는데 콜백함수를 써도 되고 아래와 같이 promise()로 대체할 수 있다.
+  // upload()메서드의 params에는 AWS S3에 업로드하기 위한 설정들이 담겨있는 객체를 받는다.
+  // 성공적으로 파일이 업로드되면 AWS S3의 지정된 버킷에 파일이 올라가고 result에는 파일의 경로, 파일 이름, 올린 버킷 등이 담겨 있는 객체를 받는다.
+  const result = await s3.upload(params).promise();
+
+  return "";
+};
+```
