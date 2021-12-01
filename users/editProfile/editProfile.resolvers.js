@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { GraphQLUpload } from "graphql-upload";
 import client from "../../client";
 import { protectedResolver } from "../users.utils";
+import { handleUploadPhotoToAWS } from "../../shared/shared.utils";
 
 export default {
   Upload: GraphQLUpload,
@@ -12,12 +13,7 @@ export default {
       let avatarUrl = null;
 
       if (avatar) {
-        const { filename, createReadStream } = await avatar;
-        const newFileName = `${Date.now()}${filename}`;
-        const readStream = createReadStream();
-        const writeStream = createWriteStream(`${process.cwd()}/uploads/${newFileName}`);
-        readStream.pipe(writeStream);
-        avatarUrl = `http://localhost:4000/uploads/${newFileName}`;
+        avatarUrl = await handleUploadPhotoToAWS(avatar);
       }
 
       let hashedPassword = null;

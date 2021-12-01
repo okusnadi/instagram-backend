@@ -360,7 +360,7 @@ export default gql`
 
 - AWS S3(Simple Storage Service)란, Simple Storage Service의 약자로 파일 서버의 역할을 하는 서비스다.
 - 즉, 다시 말해 아마존에서 제공하는 파일을 올릴 수 있는 서버를 제공하는 서비스를 말한다.
-- AWS S3에 버킷을 생성하고, 버킷을 생성할 때 받은 Access Key ID와 Secret Access Key를 이용해서 AWS S3에 연결할 수 있다.
+- AWS S3에 버킷을 생성하고, 버킷을 생성할 때 받은 Access Key ID와 Secret Access Key를 이용해서 AWS S3에 연결해서 파일을 업로드할 수 있다.
 
 ```js
 import AWS from "aws-sdk";
@@ -373,4 +373,59 @@ AWS.config.update({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
+```
+
+### Stream을 이용해서 서버에 파일 업로드하기
+
+- 아래와 같은 방법을 통해 createReadStream과 createWriteStream, pipe 등을 이용해서 서버에 파일을 업로드해서 저장할 수 있다. (ex: 로컬 서버)
+
+```js
+import { createWriteStream } from "fs";
+import bcrypt from "bcrypt";
+import { GraphQLUpload } from "graphql-upload";
+import client from "../../client";
+import { protectedResolver } from "../users.utils";
+import { handleUploadPhoto } from "../../shared/shared.utils";
+
+export default {
+  Upload: GraphQLUpload,
+  Mutation: {
+    // 프로필 수정
+    editProfile: protectedResolver(async (_, { firstName, lastName, username, email, password, bio, avatar }, { loggedInUser }) => {
+      let avatarUrl = null;
+
+      if (avatar) {
+        const { filename, createReadStream } = await avatar;
+        const newFileName = `${Date.now()}${filename}`;
+        const readStream = createReadStream();
+        const writeStream = createWriteStream(`${process.cwd()}/uploads/${newFileName}`);
+        readStream.pipe(writeStream);
+        avatarUrl = `http://localhost:4000/uploads/${newFileName}`;
+      }
+
+      let hashedPassword = null;
+      if (password) {
+        hashedPassword = await bcrypt.hash(password, 10);
+      }
+
+      const updatedUser = await client.user.update({
+        where: { id: loggedInUser.id },
+        data: {
+          firstName,
+          lastName,
+          username,
+          email,
+          bio,
+          ...(hashedPassword && { password: hashedPassword }),
+          ...(avatarUrl && { avatar: avatarUrl }),
+        },
+      });
+      if (updatedUser) {
+        return { ok: true, error: "프로필 업데이트에 성공하였습니다." };
+      } else {
+        return { ok: false, error: "프로필 업데이트에 실패하였습니다." };
+      }
+    }),
+  },
+};
 ```
