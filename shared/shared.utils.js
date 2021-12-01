@@ -10,10 +10,10 @@ s3.config.update({
 });
 
 // AWS에 사진을 업로드하는 함수
-export const handleUploadPhotoToAWS = async (avatar) => {
-  const { filename, createReadStream } = await avatar;
+export const handleUploadPhotoToAWS = async (file, folderName) => {
+  const { filename, createReadStream } = await file;
   const bucketName = "instagram-gw-uploads";
-  const fileName = `${Date.now()}-${filename}`;
+  const fileName = `${folderName}/${Date.now()}-${filename}`;
   const readStream = createReadStream();
 
   const params = {

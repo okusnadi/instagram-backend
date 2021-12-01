@@ -107,6 +107,24 @@ server.listen().then(({ url }) => {
 });
 ```
 
+### Upload
+
+- Upload는 최신 프리즈마에서 지원하는 타입으로 파일을 업로드할 때 사용할 수 있는 타입이다.
+- Upload타입은 아래와 같이 Promise를 리턴하는 객체 형태이다.
+- 해당 객체는 파일 이름과 파일의 타입, 인코딩, createReadStream함수를 가지고 있다.
+- createReadStream()을 통해 파일의 정보를 스트림으로 읽어올 수 있다.
+
+```js
+Promise {
+  {
+    filename: 'docker.png',
+    mimetype: 'image/png',
+    encoding: '7bit',
+    createReadStream: [Function: createReadStream]
+  }
+}
+```
+
 ### createReadStream()
 
 - node.js의 fs패키지에서 가져온 createReadStream()메서드는 전달받은 파일을 스트림 형태로 읽어온다.

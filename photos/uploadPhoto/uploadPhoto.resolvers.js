@@ -1,4 +1,5 @@
 import client from "../../client";
+import { handleUploadPhotoToAWS } from "../../shared/shared.utils";
 import { protectedResolver } from "../../users/users.utils";
 import { handleParseHashtags } from "../photos.utils";
 
@@ -19,10 +20,12 @@ export default {
           hashtagArray = handleParseHashtags(caption);
         }
 
+        const fileUrl = await handleUploadPhotoToAWS(file, `uploads/${loggedInUser.username}`);
+
         // 3. 사진을 위에서 생성한 새로운 해시태그 배열과 함께 DB에 생성 (사진을 업로드하면 해시태그 모델도 자동 생성됨)
         const newPhoto = await client.photo.create({
           data: {
-            file,
+            file: fileUrl,
             caption,
             user: { connect: { id: loggedInUser.id } },
             ...(hashtagArray?.length > 0 && { hashtags: { connectOrCreate: hashtagArray } }),

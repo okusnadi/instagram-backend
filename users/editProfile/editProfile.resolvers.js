@@ -13,7 +13,7 @@ export default {
       let avatarUrl = null;
 
       if (avatar) {
-        avatarUrl = await handleUploadPhotoToAWS(avatar);
+        avatarUrl = await handleUploadPhotoToAWS(avatar, `avatars/${loggedInUser.username}`);
       }
 
       let hashedPassword = null;
