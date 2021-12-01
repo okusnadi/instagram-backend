@@ -506,3 +506,8 @@ export const handleUploadPhotoToAWS = async (avatar) => {
   return "";
 };
 ```
+
+### AWS S3에 업로드한 파일 삭제하기
+
+- 단일 파일 삭제: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#deleteObject-property
+- 여러 파일 삭제: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#deleteObjects-property

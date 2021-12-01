@@ -26,3 +26,18 @@ export const handleUploadPhotoToAWS = async (file, folderName) => {
 
   return Location;
 };
+
+// AWS에서 사진을 삭제하는 함수
+export const handleDeletePhotoFromAWS = async (fileUrl) => {
+  const decodedUrl = decodeURI(fileUrl);
+  const filePath = decodedUrl.split("/uploads/")[1];
+  const bucketName = "instagram-gw-uploads";
+  const fileName = `uploads/${filePath}`;
+
+  const params = {
+    Bucket: bucketName,
+    Key: fileName,
+  };
+
+  await s3.deleteObject(params).promise();
+};

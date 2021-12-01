@@ -1,4 +1,5 @@
 import client from "../../client";
+import { handleDeletePhotoFromAWS } from "../../shared/shared.utils";
 import { protectedResolver } from "../../users/users.utils";
 
 export default {
@@ -14,6 +15,7 @@ export default {
           return { ok: true, error: "사진을 업로드한 사용자가 아닙니다.", photo: null };
         }
         const deletedPhoto = await client.photo.delete({ where: { id: photoId } });
+        await handleDeletePhotoFromAWS(foundPhoto.file);
 
         return { ok: true, error: "사진 삭제에 성공하였습니다.", photo: deletedPhoto };
       } catch (error) {
