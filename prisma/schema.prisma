@@ -21,6 +21,8 @@ model User {
   followers  User[]    @relation(name: "FollowersFollowing", references: [id])
   followings User[]    @relation(name: "FollowersFollowing", references: [id])
   comments   Comment[]
+  rooms      Room[]
+  messages   Message[]
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
@@ -65,6 +67,25 @@ model Comment {
   userId    Int
   photoId   Int
   payload   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Room {
+  id        Int       @id @default(autoincrement())
+  users     User[]
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  payload   String
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+  userId    Int
+  roomId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
