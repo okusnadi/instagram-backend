@@ -79,6 +79,43 @@ const handleX = (handleY) => (root, args, context, info) => {
 };
 ```
 
+### Curring 이해
+
+- editProfile은 로그인 하지 않은 사용자가 실행할 수 없도록 resolver를 먼저 보호하기 위해 protectedResolver함수를 생성하고 resolver함수를 감싸줬다.
+- protectedResolver함수는 아래와 같은 과정을 거치게 된다.
+
+```js
+export const protectedResolver = (resolver) => {
+  return (root, args, context, info) => {
+    if (context.loggedInUser === null) {
+      return { ok: false, error: "로그인이 필요합니다." };
+    }
+    return resolver(root, args, context, info);
+  };
+};
+
+// 1) protectedResolver함수는 resolver함수를 인자로 받고 또 다른 새로운 resolover함수가 가진 형태와 똑같이 생긴 함수를 리턴한다.
+editProfile: protectedResolver(() => {});
+
+// 2) resolover함수가 가진 형태와 똑같이 생긴 함수는 인자로 root, args, context, info를 가진다.
+// Apollo서버가 context에 준 loggedInUser를 꺼내와서 현재 로그인이 되어있는지 체크한다.
+// 사실상 로그인이 되어있는지를 체크하기 위해 protectedResolver함수를 생성해준 것이라고 보면 된다.
+// 로그인이 되어있는지 체크후, protectedResolver함수의 인자로 받은 실제 resolver함수를 리턴해준다.
+editProfile: (root, args, context, info) => {
+  if (context.loggedInUser === null) {
+    return { ok: false, error: "로그인이 필요합니다." };
+  }
+  return resolver(root, args, context, info);
+};
+
+// 3) 그러면 최종적으로 아래와 같은 형태가 된다.
+editProfile: resolver(root, args, context, info);
+
+// 4) 그리고 resolver부분을 다시 바꿔주면 아래같은 형태가 되는데, 아래는 resolver가 익명함수로 만들어져 있고, 뒤에 (root, args, context, info)를 통해 해당 익명함수의 파라미터에 인자들을 전달하고, 바로 익명함수를 호출하는 형태로 되어있다.
+// 그래서 최종적으로 (root, args, context, info) => { 작성한 코드 }함수를 호출하는 것이다.
+editProfile: ((root, args, context, info) => { 작성한 코드 })(root, args, context, info);
+```
+
 ### Apollo Server를 Apollo Express Server로 통합하기
 
 - https://www.apollographql.com/docs/apollo-server/data/file-uploads/
