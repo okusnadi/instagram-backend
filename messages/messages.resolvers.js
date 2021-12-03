@@ -12,5 +12,14 @@ export default {
       console.log("messages foundMessage", foundMessage);
       return foundMessage;
     },
+    unreadTotal: async ({ id }, _, { loggedInUser }) => {
+      if (!loggedInUser) {
+        return 0;
+      }
+      // const foundMessage = await client.message.count({ where: { read: false, roomId: id, userId: { not: { id: loggedInUser.id } } } }); 테스트 필요
+      const foundMessage = await client.message.count({ where: { read: false, roomId: id, user: { id: { not: loggedInUser.id } } } });
+      console.log("foundMessage count", foundMessage);
+      return foundMessage;
+    },
   },
 };
